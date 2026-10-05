@@ -1,13 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-[System.Serializable]
-public enum EventType
-{
-    OnItemDropped,
-    OnItemMatched
-}
-
 public class EventManager : Singleton<EventManager>
 {
     public override bool Persist => false;
