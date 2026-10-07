@@ -1,14 +1,18 @@
 using Match3.Interfaces;
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class Holdable : MonoBehaviour, IInteractable
 {
+    public Action OnInteractionStart;
+    public Action OnInteractionEnd;
+
     public bool CanInteractable{ get; private set; }
 
     public void InteractionStart()
     {
-        EventManager.Instance.TriggerEvent(EventType.ItemPicked, gameObject);
+        OnInteractionStart?.Invoke();
     }
 
     public void InteractionUpdate(Vector3 positon)
@@ -18,7 +22,7 @@ public class Holdable : MonoBehaviour, IInteractable
 
     public void InteractionEnd()
     {
-        EventManager.Instance.TriggerEvent(EventType.ItemDropped, gameObject);
+        OnInteractionEnd?.Invoke();
     }
 
 }

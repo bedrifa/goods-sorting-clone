@@ -5,6 +5,7 @@ namespace Match3.InteractionSystem
 {
     public class InteractionController : MonoBehaviour
     {
+        [SerializeField] private LayerMask _interactionLayerMask;
         private Camera _cam;
         private IInteractable _interactableObject;
     
@@ -19,7 +20,7 @@ namespace Match3.InteractionSystem
 
             if (Input.GetMouseButtonDown(0))
             {
-                Collider2D hitCollider = Physics2D.OverlapPoint(_cam.ScreenToWorldPoint(Input.mousePosition));
+                Collider2D hitCollider = Physics2D.OverlapPoint(_cam.ScreenToWorldPoint(Input.mousePosition), _interactionLayerMask);
                 if (hitCollider != null && hitCollider.TryGetComponent(out _interactableObject))
                 {
                     _interactableObject.InteractionStart();

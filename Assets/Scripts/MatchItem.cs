@@ -1,19 +1,22 @@
 using DG.Tweening;
+using Match3.Interfaces;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Collider2D))]
-public class MatchItem : MonoBehaviour, IMatchItem, IEventListener
+public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
 {
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private ParticleSystem _blastParticle;
+    [SerializeField] private LayerMask _slotLayer;
     public bool CanInteractable => !_isLocked;
     public int Id { get; private set; }
 
-    public Vector2 GridPosition { get; private set; }
+    public Vector2Int GridPos { get; private set; }
 
     private Sequence _onDropTween;
-    private bool _isLocked;
-    
+    private bool _isLocked, _isPicked;
+    private Vector3 _lastPosition;
     private void Awake()
     {
         float y = transform.localScale.y;
@@ -24,16 +27,6 @@ public class MatchItem : MonoBehaviour, IMatchItem, IEventListener
             .SetLink(gameObject)
             .SetAutoKill(false)
             .Pause();
-    }
-
-    private void OnEnable()
-    {
-        EventManager.Instance.AddEventListener(EventType.ItemDropped, this);
-    }
-
-    private void OnDisable()
-    {
-        EventManager.Instance.RemoveEventListener(EventType.ItemDropped, this);
     }
 
     public MatchItem SetLock(bool isLocked)
@@ -61,15 +54,16 @@ public class MatchItem : MonoBehaviour, IMatchItem, IEventListener
         return this;
     }
 
-    public MatchItem SetGridPosition(Vector2 current)
+    public MatchItem SetGridPosition(Vector2Int gridPos)
     {
-        GridPosition = current;
+        GridPos = gridPos;
         return this;
     }
 
     public async void Matched()
     {
         GetComponent<Collider2D>().enabled = false;
+        _isLocked = true;
         _onDropTween.Restart();
 
         await _onDropTween.AsyncWaitForCompletion();
@@ -81,18 +75,35 @@ public class MatchItem : MonoBehaviour, IMatchItem, IEventListener
         Destroy(gameObject, 1);
     }
 
-
-    public void OnEvent(EventType eventType, object eventData)
-    {
-        switch (eventType)
-        {
-            case EventType.ItemDropped: if(eventData == (object) gameObject) ItemDropped(); break;
-            default: break;
-        }
-    }
-
-    private void ItemDropped()
+    public void Drop()
     {
         _onDropTween.Restart();
+    }
+
+    public void InteractionStart()
+    {
+        _lastPosition = transform.position;
+    }
+
+    public void InteractionUpdate(Vector3 position)
+    {
+        transform.position = new Vector3(position.x, position.y, transform.position.z);
+    }
+
+    public void InteractionEnd()
+    {
+        Collider2D hitSlot = Physics2D.OverlapPoint(transform.position, _slotLayer);
+        if (hitSlot != null && hitSlot.TryGetComponent(out ShelfSlot slot))
+        {
+            transform.parent = hitSlot.gameObject.transform;
+            transform.localPosition = Vector3.zero;
+            Vector2Int temp = GridPos;
+            SetGridPosition(slot.GridPos);
+            EventManager.Instance.TriggerEvent(EventType.ItemDropped, new ItemDropData(this, temp, GridPos));
+        }
+        else
+        {
+            transform.position = _lastPosition;
+        }
     }
 }

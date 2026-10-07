@@ -9,38 +9,37 @@ public class RowMatchCondition : IMatchCondition
         _minRequirementForMatching = minRequirementForMatching;
     }
 
-    public HashSet<IMatchItem> FindMatches(IMatchItem[,] board, IMatchItem movedItem = null)
+    public HashSet<IMatchItem> FindMatches(BoardData<IMatchItem> board, IMatchItem movedItem = null)
     {
         HashSet<IMatchItem> matched = new HashSet<IMatchItem>();
         HashSet<IMatchItem> current = new HashSet<IMatchItem>();
-
+        
         if (movedItem != null &&  board != null)
         {
             current.Add(movedItem);
 
-            int startColumn = (int)movedItem.GridPosition.y;
-            int startRow = (int)movedItem.GridPosition.x;
-            int maxColumn = board.GetLength(1);
+            int startWidth = movedItem.GridPos.x;
+            int startHeight = movedItem.GridPos.y;
 
-            if (startColumn < maxColumn)
+            if (startHeight < board.Height)
             {
-                for (int i = startColumn + 1; i < maxColumn; i++)
+                for (int i = startHeight + 1; i < board.Height; i++)
                 {
-                    if (board[startRow, i] == null || board[startRow, i].Id != movedItem.Id)
+                    if (board[startWidth, i] == null || board[startWidth, i].Id != movedItem.Id)
                         break;
 
-                    current.Add(board[startRow, i]);
+                    current.Add(board[startWidth, i]);
                 }
             }
             
-            if(startColumn > 0)
+            if(startHeight > 0)
             {
-                for (int i = startColumn - 1; i >= 0; i--)
+                for (int i = startHeight - 1; i >= 0; i--)
                 {
-                    if (board[startRow, i] == null || board[startRow, i].Id != movedItem.Id)
+                    if (board[startWidth, i] == null || board[startWidth, i].Id != movedItem.Id)
                         break;
 
-                    current.Add(board[startRow, i]);
+                    current.Add(board[startWidth, i]);
                 }
             }
 

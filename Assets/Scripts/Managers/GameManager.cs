@@ -7,5 +7,6 @@ public class GameManager : Singleton<GameManager>
     {
         base.Awake();
         Input.multiTouchEnabled = false;
+        Application.targetFrameRate = 90;
     }
 }

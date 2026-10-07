@@ -1,12 +1,10 @@
 using System.Collections.Generic;
 public class MatchController
 {
-    private IMatchItem[,] _board;
     private IList<IMatchCondition> _conditions;
-    
-    public MatchController(IMatchItem[,] board) 
+    public MatchController()
     {
-        _board = board;
+        _conditions = new List<IMatchCondition>();
     }
 
     public MatchController AddCondition(IMatchCondition condition)
@@ -29,18 +27,20 @@ public class MatchController
         return this;
     }
 
-    public void PerformMatches(IMatchItem movedItem = null)
+    public bool PerformMatches(BoardData<IMatchItem> board, IMatchItem movedItem = null)
     {
         HashSet<IMatchItem> matches = new HashSet<IMatchItem>();
 
         for(int i = 0; i < _conditions.Count; i++)
         {
-            matches.UnionWith(_conditions[i].FindMatches(_board, movedItem));
+            matches.UnionWith(_conditions[i].FindMatches(board, movedItem));
         }
+        if (matches.Count == 0) return false;
 
         foreach(IMatchItem matchItem in matches)
         {
             matchItem.Matched();
         }
+        return true;
     }
 }
