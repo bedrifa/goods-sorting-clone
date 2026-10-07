@@ -9,14 +9,15 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
     [SerializeField] private SpriteRenderer _spriteRenderer;
     [SerializeField] private ParticleSystem _blastParticle;
     [SerializeField] private LayerMask _slotLayer;
+    
     public bool CanInteractable => !_isLocked;
     public int Id { get; private set; }
-
     public Vector2Int GridPos { get; private set; }
 
     private Sequence _onDropTween;
-    private bool _isLocked, _isPicked;
+    private bool _isLocked;
     private Vector3 _lastPosition;
+
     private void Awake()
     {
         float y = transform.localScale.y;
@@ -32,13 +33,15 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
     public MatchItem SetLock(bool isLocked)
     {
         _isLocked = isLocked;
-        _spriteRenderer.color = Color.gray3;
+        _spriteRenderer.color = _isLocked ? Color.gray3 : Color.white;
+        if (_isLocked) transform.DOLocalMove(new Vector3(0, .15f, 1),.1f);
+        else transform.DOLocalMove(Vector3.zero, .1f);
         return this;
     }
 
     public MatchItem SetInvisibility(bool isInvisible)
     {
-        gameObject.SetActive(isInvisible);
+        gameObject.SetActive(!isInvisible);
         return this;
     }
 
