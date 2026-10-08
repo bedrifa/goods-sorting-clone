@@ -31,8 +31,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2666321189953451402}
-  - {fileID: 1092663880090254463}
   - {fileID: 3035703584339924347}
+  - {fileID: 1092663880090254463}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5446584073605946407
@@ -49,8 +49,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BoardManager
   Rows:
   - {fileID: 855429485981398073}
-  - {fileID: 2447240657492295116}
   - {fileID: 360085902479021256}
+  - {fileID: 2447240657492295116}
   _maxSlotCountInAShelf: 3
   _matchItemPrefab: {fileID: 3035750983670720128, guid: 3d82ef4a1d8d8ad4a8c6936d8664bd38, type: 3}
 --- !u!1001 &723479585619560566
@@ -103,7 +103,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2301037236006751515, guid: ed1f05a11b966444a9ed50420e56f437, type: 3}
       propertyPath: m_Name
-      value: Shelf (1)
+      value: Shelf (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -249,7 +249,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2301037236006751515, guid: ed1f05a11b966444a9ed50420e56f437, type: 3}
       propertyPath: m_Name
-      value: Shelf (2)
+      value: Shelf (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
