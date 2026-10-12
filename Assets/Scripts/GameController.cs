@@ -39,8 +39,9 @@ public class GameController : MonoBehaviour, IEventListener
             EventManager.Instance.TriggerEvent(EventType.ItemMatched, data.CurrentGridPos.x);
         }
         else
+        {
             item.Drop();
-
+        }
     }
 
     public void OnEvent(EventType eventType, object eventData)

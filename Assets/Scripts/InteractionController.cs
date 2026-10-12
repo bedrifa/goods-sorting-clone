@@ -23,6 +23,12 @@ namespace Match3.InteractionSystem
                 Collider2D hitCollider = Physics2D.OverlapPoint(_cam.ScreenToWorldPoint(Input.mousePosition), _interactionLayerMask);
                 if (hitCollider != null && hitCollider.TryGetComponent(out _interactableObject))
                 {
+                    if (!_interactableObject.CanInteractable)
+                    {
+                        _interactableObject = null;
+                        return;
+                    }
+
                     _interactableObject.InteractionStart();
                 }
             }

@@ -1,7 +1,6 @@
 using DG.Tweening;
 using Match3.Interfaces;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(Collider2D))]
 public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
@@ -12,7 +11,7 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
     
     public bool CanInteractable => !_isLocked;
     public int Id { get; private set; }
-    public Vector2Int GridPos { get; private set; }
+    public Vector3Int GridPos { get; private set; }
 
     private Sequence _onDropTween;
     private bool _isLocked;
@@ -57,7 +56,7 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
         return this;
     }
 
-    public MatchItem SetGridPosition(Vector2Int gridPos)
+    public MatchItem SetGridPosition(Vector3Int gridPos)
     {
         GridPos = gridPos;
         return this;
@@ -100,8 +99,8 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
         {
             transform.parent = hitSlot.gameObject.transform;
             transform.localPosition = Vector3.zero;
-            Vector2Int temp = GridPos;
-            SetGridPosition(slot.GridPos);
+            Vector3Int temp = GridPos;
+            SetGridPosition(new Vector3Int(slot.GridPos.x, slot.GridPos.y, 0));
             EventManager.Instance.TriggerEvent(EventType.ItemDropped, new ItemDropData(this, temp, GridPos));
         }
         else
