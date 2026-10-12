@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f831812732371d46ac3b4610bd3a9cb, type: 3}
   m_Name: Level 2
   m_EditorClassIdentifier: Assembly-CSharp::LevelData
-  BoardTemplate: {fileID: 5446584073605946407, guid: 1de7f630f6fd1df488902fd9fadf9479, type: 3}
+  BoardTemplate: {fileID: 7620170969612712808, guid: 522577fffc3e28f478a86215b6789ce3, type: 3}
   BlankCountOfFirstLayer: 3
-  ItemVariety: 2
+  ItemVariety: 8
   MaxLayerDepth: 3
