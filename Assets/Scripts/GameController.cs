@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameController : MonoBehaviour, IEventListener
+public class GameController : MonoBehaviour
 {
     [SerializeField] private List<LevelData> _levelDatas;
     [SerializeField] private List<Sprite> _itemSprites;
@@ -16,11 +16,11 @@ public class GameController : MonoBehaviour, IEventListener
     
     private void OnEnable()
     {
-        EventManager.Instance.AddEventListener(EventType.ItemDropped, this);
+        EventManager.AddEventListener<ItemDropData>(OnItemDropped);
     }
     private void OnDisable()
     {
-        EventManager.Instance?.RemoveEventListener(EventType.ItemDropped, this);
+        EventManager.RemoveEventListener<ItemDropData>(OnItemDropped);
     }
 
     private void GenerateLevel() 
@@ -36,20 +36,11 @@ public class GameController : MonoBehaviour, IEventListener
         if (_matchController.PerformMatches(_boardManager.Board, data.Item))
         {
             _boardManager.Clear(data.Item.GridPos.x);
-            EventManager.Instance.TriggerEvent(EventType.ItemMatched, data.CurrentGridPos.x);
+            EventManager.TriggerEvent(new ItemMatchData { MatchedPosition = data.Item.GridPos });
         }
         else
         {
             item.Drop();
-        }
-    }
-
-    public void OnEvent(EventType eventType, object eventData)
-    {
-        switch (eventType)
-        {
-            case EventType.ItemDropped: OnItemDropped(eventData as ItemDropData); break;
-            default: break;
         }
     }
 }

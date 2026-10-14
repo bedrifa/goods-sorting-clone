@@ -1,60 +1,51 @@
+using System;
 using System.Collections.Generic;
-using UnityEngine;
-public class EventManager : Singleton<EventManager>
+
+public static class EventManager
 {
-    public override bool Persist => false;
-
-    private Dictionary<EventType, List<IEventListener>> _eventListeners;
-
-    protected override void Awake()
+    public static readonly Dictionary<Type, Delegate> _eventListeners = new Dictionary<Type, Delegate>();
+    
+    public static void AddEventListener<T>(Action<T> listener) where T : struct
     {
-        base.Awake();
-        _eventListeners = new Dictionary<EventType, List<IEventListener>>();
-    }
+        Type eventType = typeof(T);
 
-    public void AddEventListener(EventType eventType, IEventListener listener)
-    {
-        if (_eventListeners.ContainsKey(eventType))
+        if (_eventListeners.TryGetValue(eventType, out Delegate currentDelegate))
         {
-            if (!_eventListeners[eventType].Contains(listener))
-                _eventListeners[eventType].Add(listener);
-            else
-                Debug.LogWarning($"{listener.GetType()} event listener already exist for {eventType} event");
+            _eventListeners[eventType] = Delegate.Combine(currentDelegate, listener);
         }
         else
         {
-            _eventListeners.Add(eventType, new List<IEventListener>() { listener });
+            _eventListeners.Add(eventType, listener);
         }
     }
 
-    public void RemoveEventListener(EventType eventType, IEventListener listener)
+    public static void RemoveEventListener<T>(Action<T> listener) where T : struct
     {
-        if (!_eventListeners.ContainsKey(eventType))
+        Type eventType = typeof(T);
+        
+        if (_eventListeners.TryGetValue(eventType, out Delegate currentDelegate))
         {
-            Debug.LogError($"{eventType} doesn't exist");
-            return;
+            Delegate temp = Delegate.Remove(currentDelegate, listener);
+
+            if (temp == null)
+                _eventListeners.Remove(eventType); 
+            else
+                _eventListeners[eventType] = temp;
         }
-
-        if (!_eventListeners[eventType].Contains(listener))
-        {
-            Debug.LogWarning($"{listener.GetType()} event listener doesn't exist for {eventType} event");
-            return;
-        }
-
-        _eventListeners[eventType].Remove(listener);
-
-        if (_eventListeners[eventType].Count == 0)
-            _eventListeners.Remove(eventType);
     }
 
-    public void TriggerEvent(EventType eventType, object eventData)
+    public static void TriggerEvent<T>(T eventData) where T : struct
     {
-        if (!_eventListeners.ContainsKey(eventType)) return;
+        Type eventType = typeof(T);
 
-        List<IEventListener> listeners = _eventListeners[eventType];
-        foreach (IEventListener listener in listeners)
+        if(_eventListeners.TryGetValue(eventType, out Delegate currentDelegate))
         {
-            listener.OnEvent(eventType, eventData);
+            Action<T> action = currentDelegate as Action<T>;
+            action?.Invoke(eventData);
         }
+    }
+    public static void Clear()
+    {
+        _eventListeners.Clear();
     }
 }

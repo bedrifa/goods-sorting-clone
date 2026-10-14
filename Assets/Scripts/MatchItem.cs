@@ -101,7 +101,7 @@ public class MatchItem : MonoBehaviour, IMatchItem, IInteractable
             transform.localPosition = Vector3.zero;
             Vector3Int temp = GridPos;
             SetGridPosition(new Vector3Int(slot.GridPos.x, slot.GridPos.y, 0));
-            EventManager.Instance.TriggerEvent(EventType.ItemDropped, new ItemDropData(this, temp, GridPos));
+            EventManager.TriggerEvent(new ItemDropData {Item = this, OldGridPos = temp, CurrentGridPos = GridPos});
         }
         else
         {
